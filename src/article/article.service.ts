@@ -145,16 +145,56 @@ export class ArticleService {
     return article;
   }
 
-  async getAllArticles() {
-    const articles = await this.prisma.article.findMany();
+  async findAll(currentUserId: number, query: any) {
+    const articles = await this.prisma.article.findMany({
+      skip: query.offest ? +query.offset : undefined,
+      take: query.limit ? +query.limit : undefined,
 
-    if (!articles) {
-      throw new HttpException(
-        'There are not articles yet',
-        HttpStatus.NOT_FOUND,
-      );
+      where: {
+        Author: { username: query.authorName ? query.authorName : undefined },
+      },
+
+      orderBy: { createdAt: query.orderBy ? query.orderBy : 'desc' },
+
+      include: { Author: true },
+    });
+
+    const totalCount = await this.prisma.article.count();
+
+    return { articles: articles, articlesCount: totalCount };
+  }
+
+  async likeArticle(currentUserId: number, slug: string) {
+    const article = await this.prisma.article.findFirst({
+      where: { slug: slug },
+      select: { id: true },
+    });
+
+    if (!article) {
+      throw new HttpException('wrong slug provided', HttpStatus.NOT_FOUND);
     }
 
-    return articles;
+    return await this.prisma.likes.create({
+      data: { usersId: currentUserId, articleId: article.id },
+    });
+  }
+
+  async dislikeArticle(currentUserId: number, slug: string) {
+    const article = await this.prisma.article.findFirst({
+      where: { slug: slug },
+      select: { id: true },
+    });
+
+    if (!article) {
+      throw new HttpException('wrong slug provided', HttpStatus.NOT_FOUND);
+    }
+
+    const like = await this.prisma.likes.findFirst({
+      where: { usersId: currentUserId, articleId: article.id },
+    });
+
+    return await this.prisma.likes.delete({
+      where: { id: like.id },
+    });
   }
 }

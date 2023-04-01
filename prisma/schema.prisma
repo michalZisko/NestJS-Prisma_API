@@ -23,6 +23,7 @@ model Users {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   articles  Article[]
+  Likes     Likes[]
 }
 
 model Article {
@@ -36,4 +37,14 @@ model Article {
   tagList     String?
   Author      Users?   @relation(fields: [authorId], references: [id])
   authorId    Int?
+  Likes       Likes[]
+}
+
+model Likes {
+  id        Int      @id @default(autoincrement())
+  User      Users?   @relation(fields: [usersId], references: [id])
+  usersId   Int
+  Article   Article? @relation(fields: [articleId], references: [id])
+  articleId Int
+  createdAt DateTime @default(now())
 }

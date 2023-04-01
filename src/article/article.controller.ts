@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { User } from 'src/decorators/user.decorator';
@@ -64,8 +65,21 @@ export class ArticleController {
     return await this.articleService.getArticleByTitle(title);
   }
 
-  @Get('/all')
-  async getAllArticles() {
-    return await this.articleService.getAllArticles();
+  @Get()
+  async getAllArticles(@User('id') id: number, @Query() query: any) {
+    console.log(query);
+    return await this.articleService.findAll(id, query);
+  }
+
+  @Post(':slgu/favorite')
+  @UseGuards(AuthGuard)
+  async likeArticle(@Param('slug') slug: string, @User('id') id: number) {
+    return await this.articleService.likeArticle(id, slug);
+  }
+
+  @Delete(':slug/favorite')
+  @UseGuards(AuthGuard)
+  async dislikeArticle(@Param('slug') slug: string, @User('id') id: number) {
+    return await this.articleService.dislikeArticle(id, slug);
   }
 }
