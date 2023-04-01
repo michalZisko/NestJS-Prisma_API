@@ -71,7 +71,7 @@ export class ArticleController {
     return await this.articleService.findAll(id, query);
   }
 
-  @Post(':slgu/favorite')
+  @Post(':slug/favorite')
   @UseGuards(AuthGuard)
   async likeArticle(@Param('slug') slug: string, @User('id') id: number) {
     return await this.articleService.likeArticle(id, slug);
