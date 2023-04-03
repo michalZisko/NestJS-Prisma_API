@@ -48,3 +48,9 @@ model Likes {
   articleId Int
   createdAt DateTime @default(now())
 }
+
+model Follow {
+  id          Int @id @default(autoincrement())
+  followerId  Int
+  followingId Int
+}

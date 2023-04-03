@@ -4,6 +4,10 @@ import { ExpressRequest } from 'src/types/expressRequest-intergface';
 import { verify } from 'jsonwebtoken';
 import { UserService } from '../user.service';
 
+interface JwTPayload {
+  username: string;
+}
+
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly userService: UserService) {}
@@ -16,7 +20,7 @@ export class AuthMiddleware implements NestMiddleware {
     const token = req.headers.authorization.split(' ')[1];
 
     try {
-      const decoded = verify(token, 'MySecretKey');
+      const decoded = verify(token, 'MySecretKey') as JwTPayload;
 
       const user = await this.userService.findByUsername(
         decoded.username,

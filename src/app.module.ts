@@ -5,9 +5,10 @@ import { TagModule } from './tag/tag.module';
 import { AuthMiddleware } from './user/middleware/auth.middleware';
 import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
-  imports: [PrismaModule, TagModule, UserModule, ArticleModule],
+  imports: [PrismaModule, TagModule, UserModule, ArticleModule, ProfileModule],
   providers: [PrismaService],
 })
 export class AppModule {
